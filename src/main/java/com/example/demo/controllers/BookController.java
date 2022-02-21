@@ -1,37 +1,40 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.Book;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.ArrayList;
+import com.example.demo.services.BookService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class BookController {
 
-    List<Book> bookList = new ArrayList<>();
+    // List<Book> bookList = new ArrayList<>();
+    private final BookService service;
 
-    @GetMapping("/add_book")
-    public String _()
-    {
-        return "add_book";
+    @RequestMapping(value = "/add_book", method = RequestMethod.POST)
+    public ResponseEntity<List<Book>> addBook(@RequestBody final Book newBook) {
+        service.addNewBook(newBook);
+        List<Book> allBooks = service.showAllBooks();
+
+        return ResponseEntity.status(HttpStatus.OK).body(allBooks);
     }
 
-    @GetMapping("/show_books")
-    public String _(Model model)
-    {
-        model.addAttribute("bookList", bookList);
-        return "show_books";
+    @RequestMapping(value = "/show_books", method = RequestMethod.GET)
+    public ResponseEntity<String> _() {
+        List<Book> allBooks = service.showAllBooks();
+
+        return ResponseEntity.status(HttpStatus.OK).body("Success");
     }
 
-    @PostMapping("/book_creating")
-    public String _(@ModelAttribute Book book)
-    {
-        bookList.add(book);
-        return "redirect:/show_books";
+    @RequestMapping(value = "/find", method = RequestMethod.POST)
+    public ResponseEntity<List<Book>> _(@RequestBody final Book book) {
+        String title = book.getTitle();
+        String isbn = book.getISBN();
+
+        return ResponseEntity.status(HttpStatus.OK).body(service.searchBookByTitleAndIsbn(title, isbn));
     }
 }
