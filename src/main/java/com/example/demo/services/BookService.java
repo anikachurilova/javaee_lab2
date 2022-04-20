@@ -1,27 +1,43 @@
 package com.example.demo.services;
 
 import com.example.demo.models.Book;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
-    List<Book> bookList = new ArrayList<Book>();
+    private final EntityManager entityManager;
+
+    @Transactional
+    public Book addNewBook(Book newBook) {
+        return entityManager.merge(newBook);
+    }
 
     public List<Book> showAllBooks() {
-        return this.bookList;
+        return entityManager
+                .createQuery("SELECT book FROM Book book", Book.class)
+                .getResultList();
     }
 
-    public void addNewBook(Book newBook)
-    {
-        this.bookList.add(newBook);
+    public Book searchBookByISBN(String ISBN) {
+        return entityManager.createQuery("SELECT book FROM Book book WHERE book.ISBN = :ISBN", Book.class)
+                .setParameter("ISBN", ISBN)
+                .getSingleResult();
     }
 
-    public List<Book> searchBookByTitleAndIsbn(String bookIsbn, String bookTitle) {
-        return this.bookList.stream().filter(x -> (x.getISBN().contains(bookIsbn) || (x.getTitle().contains(bookTitle)))).collect(Collectors.toList());
+    public List<Book> searchBookByISBNOrTitleOrAuthorName(String ISBN, String title, String authorName) {
+        return entityManager.createQuery("SELECT book FROM Book book WHERE book.ISBN = :ISBN OR book.title = :title OR book.authorName = :authorName",
+                        Book.class)
+                .setParameter("ISBN", ISBN)
+                .setParameter("title", title)
+                .setParameter("authorName", authorName)
+                .getResultList();
     }
 }

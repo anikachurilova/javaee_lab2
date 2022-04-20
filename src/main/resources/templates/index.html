@@ -22,6 +22,7 @@
             <form id="bookSearchingForm">
                 Title: <input name="title">
                 ISBN: <input name="isbn">
+                Book author's name: <input name="authorName">
                 <button type="find">Search</button>
             </form>
 
@@ -88,8 +89,9 @@
                         dataType: 'json',
                         data: JSON.stringify
                         ({
+                            isbn: $(this).find('[name=isbn]').val(),
                             title: $(this).find('[name=title]').val(),
-                            isbn: $(this).find('[name=isbn]').val()
+                            authorName: $(this).find('[name=authorName]').val()
                         }),
                         beforeSend: function (xhr)
                         {
@@ -112,7 +114,6 @@
                 $('#getAll').click(function()
                 {
                     var $bookList = $('#booksTable');
-                    $bookList.empty();
 
                     $.ajax({
                         url: '/show_books',

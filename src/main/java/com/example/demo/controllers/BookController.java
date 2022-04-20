@@ -24,17 +24,18 @@ public class BookController {
     }
 
     @RequestMapping(value = "/show_books", method = RequestMethod.GET)
-    public ResponseEntity<String> _() {
+    public ResponseEntity<List<Book>> ShowBooks() {
         List<Book> allBooks = service.showAllBooks();
 
-        return ResponseEntity.status(HttpStatus.OK).body("Success");
+        return ResponseEntity.status(HttpStatus.OK).body(allBooks);
     }
 
     @RequestMapping(value = "/find", method = RequestMethod.POST)
-    public ResponseEntity<List<Book>> _(@RequestBody final Book book) {
+    public ResponseEntity<List<Book>> SearchBook(@RequestBody final Book book) {
         String title = book.getTitle();
         String isbn = book.getISBN();
+        String authorName = book.getAuthorName();
 
-        return ResponseEntity.status(HttpStatus.OK).body(service.searchBookByTitleAndIsbn(title, isbn));
+        return ResponseEntity.status(HttpStatus.OK).body(service.searchBookByISBNOrTitleOrAuthorName(isbn, title, authorName));
     }
 }
