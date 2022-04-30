@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.Book;
-import com.example.demo.services.BookService;
+import com.example.demo.services.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +13,20 @@ import java.util.List;
 public class BookController {
 
     // List<Book> bookList = new ArrayList<>();
-    private final BookService service;
+    // private final BookService service;
+    private final BookRepository bookRepository;
 
     @RequestMapping(value = "/add_book", method = RequestMethod.POST)
     public ResponseEntity<List<Book>> addBook(@RequestBody final Book newBook) {
-        service.addNewBook(newBook);
-        List<Book> allBooks = service.showAllBooks();
+        bookRepository.save(newBook);
+        List<Book> allBooks = bookRepository.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(allBooks);
     }
 
     @RequestMapping(value = "/show_books", method = RequestMethod.GET)
     public ResponseEntity<List<Book>> ShowBooks() {
-        List<Book> allBooks = service.showAllBooks();
+        List<Book> allBooks = bookRepository.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(allBooks);
     }
@@ -34,8 +35,8 @@ public class BookController {
     public ResponseEntity<List<Book>> SearchBook(@RequestBody final Book book) {
         String title = book.getTitle();
         String isbn = book.getISBN();
-        String authorName = book.getAuthorName();
+        // String authorName = book.getAuthorName();
 
-        return ResponseEntity.status(HttpStatus.OK).body(service.searchBookByISBNOrTitleOrAuthorName(isbn, title, authorName));
+        return ResponseEntity.status(HttpStatus.OK).body(bookRepository.findByISBNContainsAndAndTitleContains(isbn, title));
     }
 }
