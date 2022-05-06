@@ -1,0 +1,50 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Log In</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<h3>Log In</h3>
+
+<form id="logIn">
+    Enter your  login: <input name="login">
+    Enter your password: <input name="password">
+    <button type="save">Log In</button>
+</form>
+
+<br/><br/><br/><br/>
+
+<div id="result"></div>
+
+<a href="/">Go to book list</a>
+
+<script>
+    $(function () {
+        $('#logIn').submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '/logInUser',
+                dataType: 'json',
+                data: JSON.stringify({
+                    login: $(this).find('[name=login]').val(),
+                    password: $(this).find('[name=password]').val()
+                }),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+                },
+                success: function (response, status, xhr) {
+                    localStorage.setItem("token", xhr.getResponseHeader("Authorization"));
+                    $('#result').text('Success!');
+                },
+                error:  function (response, status, xhr) {
+                    $('#result').text('Failure!');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

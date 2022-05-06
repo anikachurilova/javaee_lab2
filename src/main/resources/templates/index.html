@@ -28,6 +28,19 @@
 
         <br/><br/><br/><br/>
 
+        <h3>Add favorite book</h3>
+
+        <form id="favoriteBooks">
+            Book ISBN: <input name="isbn">
+            <br/>
+            <button id="addFavoriteBook">Add to list of favorite books</button>
+            <button id="removeFromFavorites">Remove from list of favorite books</button>
+        </form>
+
+        <button id="getFavoriteBooks">Get list of favorite books</button>
+
+        <br/><br/><br/><br/>
+
         <h4>All present books</h4>
         <button id="getAll">Show all books</button>
             <table border="1">
@@ -61,7 +74,8 @@
                         }),
                         beforeSend: function (xhr)
                         {
-                            xhr.setRequestHeader('Content-Type', 'application/json')
+                            xhr.setRequestHeader('Content-Type', 'application/json'),
+                            xhr.setRequestHeader('Authorization', localStorage.getItem("token"))
                         },
                         success: function (response)
                         {
@@ -95,7 +109,8 @@
                         }),
                         beforeSend: function (xhr)
                         {
-                            xhr.setRequestHeader('Content-Type', 'application/json')
+                            xhr.setRequestHeader('Content-Type', 'application/json'),
+                            xhr.setRequestHeader('Authorization', localStorage.getItem("token"))
                         },
                         success: function (response)
                         {
@@ -117,6 +132,11 @@
 
                     $.ajax({
                         url: '/show_books',
+                        beforeSend: function (xhr)
+                        {
+                            xhr.setRequestHeader('Content-Type', 'application/json'),
+                            xhr.setRequestHeader('Authorization', localStorage.getItem("token"))
+                        },
                         success: function (response)
                         {
                             response.forEach(function(book)
@@ -130,8 +150,64 @@
                         }
                     });
                 });
-            });
 
+            $('#getFavorite').click(function(){
+            var $bookList = $('#booksTable');
+            $bookList.empty();
+            $.ajax({
+                type: 'GET',
+                url: '/listOfFavBooks',
+                dataType: 'json',
+
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json'),
+                    xhr.setRequestHeader('Authorization', localStorage.getItem("token"))
+                },
+                success: function (response) {
+                    response.forEach(function (book) {
+                                $bookList.append(
+                                '   <tr><td>' + book.title +
+                                '   </td><td>' + book.isbn +
+                                '   </td><td>' + book.authorName +
+                                '   </td></tr>');
+                    })
+                }
+            });
+        });
+
+        $('#addFavoriteBook').click(function(e){
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/addBookToFavList',
+                dataType: 'json',
+                data: JSON.stringify({
+                    isbn: $('#favoriteBooks').find('[name=isbn]').val()
+                }),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json'),
+                    xhr.setRequestHeader('Authorization', localStorage.getItem("token"))
+                },
+            });
+        });
+
+        $('#removeFromFavorites').click(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '/removeFromFavBook',
+                dataType: 'json',
+                data: JSON.stringify({
+                    isbn: $('#favoriteForm').find('[name=isbn]').val()
+                }),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json'),
+                    xhr.setRequestHeader('Authorization', localStorage.getItem("token"))
+                },
+            });
+        });
+    });
         </script>
     </body>
 </html>

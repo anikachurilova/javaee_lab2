@@ -1,7 +1,8 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.Book;
-import com.example.demo.services.BookRepository;
+import com.example.demo.interfaces.BookRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +23,21 @@ public class IndexController {
         return "index";
     }
 
+    @PreAuthorize("isFullyAuthenticated()")
     @GetMapping("/book/{isbn}")
-    public String _(@PathVariable String isbn, @ModelAttribute Book _, Model model) {
+    public String _(@PathVariable String isbn, @ModelAttribute Book bookEntity, Model model) {
         model.addAttribute("book", bookRepository.findById(isbn));
         return "book";
+    }
+
+    @GetMapping("/logInUser")
+    public String logIn() {
+        return "logInUser";
+    }
+
+    @GetMapping("/signUpUser")
+    public String signUp() {
+        return "signUpUser";
     }
 }
 
