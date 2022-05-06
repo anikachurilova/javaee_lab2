@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,7 +24,7 @@ public class BookController {
 
     @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/add_book", method = RequestMethod.POST)
-    public ResponseEntity<List<Book>> addBook(@RequestBody final Book bookEntity) {
+    public ResponseEntity<List<Book>> addBook(@Valid @RequestBody final Book bookEntity) {
         bookRepository.save(bookEntity);
         List<Book> allBooks = bookRepository.findAll();
 

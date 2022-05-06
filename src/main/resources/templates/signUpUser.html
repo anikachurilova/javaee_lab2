@@ -13,6 +13,8 @@
     <button type="save">Sign Up</button>
 </form>
 
+<div id="saveDiv"></div>
+
 <br/><br/><br/><br/>
 
 <a href="/">Go to book list</a>
@@ -21,6 +23,7 @@
     $(function () {
         $('#signUp').submit(function (e) {
             e.preventDefault();
+            $('#saveDiv').empty();
 
             $.ajax({
                 type: 'POST',
@@ -33,6 +36,12 @@
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Content-Type', 'application/json')
                 },
+                success: function (response) {
+                    $('#saveDiv').text('OK:\n' + JSON.stringify(response, null, 4));
+                },
+                error: function (xhr) {
+                    $('#saveDiv').text('Failure! Errors:\n' + JSON.stringify(xhr.responseJSON, null, 4));
+                }
             });
         });
     });

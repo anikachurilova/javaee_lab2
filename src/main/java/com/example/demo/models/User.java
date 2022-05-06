@@ -2,6 +2,9 @@ package com.example.demo.models;
 
 import java.util.List;
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,9 +33,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Login must contain only letters both registers and digits!")
     @Column(name = "login", unique = true)
     private String login;
 
+    @Size(min = 8, max = 20, message = "Password must be 8-20 symbols length!")
     @Column(name = "password")
     private String password;
 }

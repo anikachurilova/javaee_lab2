@@ -6,6 +6,8 @@ import com.example.demo.models.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.Arrays;
 
 @Controller
@@ -15,7 +17,7 @@ public class AuthorizationController {
     private final UserRepository service;
 
     @RequestMapping(value = "/signUpUser", method = RequestMethod.POST)
-    public String _(@RequestBody final User user) {
+    public String _(@Valid @RequestBody final User user) {
         Permission u = new Permission();
         u.setPermission(PermissionTypes.AUTHORIZED_USER);
         u.setId(1);

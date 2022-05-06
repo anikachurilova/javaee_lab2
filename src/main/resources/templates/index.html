@@ -16,6 +16,8 @@
             <button type="save">Add book</button>
         </form>
 
+        <div id="saveBookDiv"></div>
+
         <br/><br/><br/><br/>
 
         <h4>Search books by title and ISBN</h4>
@@ -61,6 +63,7 @@
 
                     var $bookList = $('#booksTable');
                     $bookList.empty();
+                    $("#saveBookDiv").empty();
 
                     $.ajax({
                         type: 'POST',
@@ -85,8 +88,11 @@
                                 '   </td><td>' + book.isbn +
                                 '   </td><td>' + book.authorName +
                                 '   </td></tr>');
+                                $("#saveBookDiv").text('OK:\n' + JSON.stringify(response, null, 4));
                             })
-                        }
+                        },
+                        error: function (xhr) {
+                            $('#saveBookDiv').text('Failure! Errors:\n' + JSON.stringify(xhr.responseJSON, null, 4));
                     });
                 });
 
